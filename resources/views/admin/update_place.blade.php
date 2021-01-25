@@ -9,7 +9,7 @@
                     <p class="card-category">Fill the form to update a place</p>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('update_data.post') }}" method="post">
+                    <form action="{{ route('update_data.post') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-md">
@@ -72,15 +72,49 @@
                         </div>
                         <div class="row mt-3">
                             <div class="col-md-4 text-center">
-                                <img src="{{ asset('img/places/' . $list['property']['gambar']) }}"
-                                     class="img-thumbnail" width="200"
-                                     alt="..." id="thumbnail">
+                                @if(str_contains($list['property']['gambar'], 'http') > 0)
+                                    <script>
+                                        let img = @json($list['property']['gambar']);
+                                        if (img.includes('<img')) {
+                                            document.write(img);
+                                        } else {
+                                            let html = `<img src="{{ $list['property']['gambar'] }}"
+                                         class="img-thumbnail" width="200"
+                                         alt="..." id="thumbnail">`;
+                                            document.write(html);
+                                        }
+                                    </script>
+                                @else
+                                    <img src="{{ asset('img/places/' . $list['property']['gambar']) }}"
+                                         class="img-thumbnail" width="200"
+                                         alt="..." id="thumbnail">
+                                @endif
                             </div>
                             <div class="col-md-8">
-                                <div class="form-group bmd-form-group">
-                                    <label>Gambar</label>
-                                    <input type="file" name="gambar" id="gambar" class="form-control"
-                                           style="position: initial; opacity: 1">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group bmd-form-group">
+                                            <label>Gambar</label>
+                                            <input type="file" name="gambar" id="gambar" class="form-control"
+                                                   style="position: initial; opacity: 1">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <h5>Or</h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group bmd-form-group">
+                                            <label>URL</label>
+                                            <input type="text" name="url_gambar" class="form-control">
+                                            @error('url_gambar')
+                                            <p class="text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -95,11 +129,15 @@
 
 @push('js')
     <script>
-        let mapCenter = [0.510440, 101.438309]; // Coordinat Riau
-        let map = L.map('map').setView(mapCenter, 12);
+        let x =  {{ $list['geometry']['coordinates'][0] }};
+        let y = {{ $list['geometry']['coordinates'][1] }};
+
+        let mapCenter = [y, x]; // Coordinat Riau
+        let map = L.map('map').setView(mapCenter, 11);
         let accessToken = 'pk.eyJ1IjoiZmFodHVyMSIsImEiOiJja2owbm1wNXYxcXdwMnFwMjl6OW43Zno4In0.F2jdwFNykOh79BFbI01vtg';
 
-        let marker = L.marker([0, 0]).addTo(map);
+
+        let marker = L.marker([y, x]).addTo(map);
 
         let longitude = document.getElementById('longitude');
         let latitude = document.getElementById('latitude');

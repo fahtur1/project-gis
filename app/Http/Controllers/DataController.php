@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Features;
 use App\Models\Geometry;
 use App\Models\Property;
+use Dotenv\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -33,8 +34,14 @@ class DataController extends Controller
     public function create(Request $request)
     {
         $file = $request->file('gambar');
-        $fileName = uniqid('upload-') . '.' . $file->extension();
-        $file->storeAs('places/', $fileName, 'images');
+        $gambar = '';
+
+        if (isset($file)) {
+            $gambar = uniqid('upload-') . '.' . $file->extension();
+            $file->storeAs('places/', $gambar, 'images');
+        } else {
+            $gambar = $request->post('url_gambar');
+        }
 
         $property = Property::create([
             'nama_toko' => $request->post('nama_toko'),
@@ -42,7 +49,7 @@ class DataController extends Controller
             'longitude' => $request->post('longitude'),
             'status_resmi' => $request->post('status_resmi'),
             'alamat' => $request->post('alamat'),
-            'gambar' => $fileName
+            'gambar' => $gambar
         ]);
 
         $geometry = Geometry::create([
@@ -76,11 +83,31 @@ class DataController extends Controller
         $property = Property::find($feature->id_property);
         $geometry = Geometry::find($feature->id_geometry);
 
+        $file = $request->file('gambar');
+
         $gambar = $property->gambar;
 
-        if ($request->file('gambar')) {
-            $gambar = $request->file('gambar')->get();
+//        dd($gambar);
+
+        if (isset($file) && $request->post('url_gambar') != null) {
+            $request->validate([
+                'url_gambar' => function ($attribute, $value, $fail) {
+                    $fail('Isi antara URL atau Pilih Gambar, Jangan Keduanya >:(');
+                }
+            ]);
+        } else if (isset($file)) {
+            if (str_contains($gambar, 'upload-')) {
+                Storage::disk('images')->delete('places/' . $feature->property->gambar);
+            }
+            $gambar = uniqid('upload-') . '.' . $file->extension();
+            $file->storeAs('places/', $gambar, 'images');
+        } else if ($request->post('url_gambar') != null) {
+            if (str_contains($gambar, 'upload-')) {
+                Storage::disk('images')->delete('places/' . $feature->property->gambar);
+            }
+            $gambar = $request->post('url_gambar');
         }
+
 
         $property->update([
             'nama_toko' => $request->post('nama_toko'),
@@ -90,6 +117,17 @@ class DataController extends Controller
             'alamat' => $request->post('alamat'),
             'gambar' => $gambar
         ]);
+
+        $geometry->update([
+            'coordinates' => [
+                $request->post('longitude'),
+                $request->post('latitude')
+            ]
+        ]);
+
+        return redirect()->route('list_place')
+            ->with('status', 'Data has been updated !')
+            ->with('class', 'success');
 
     }
 

@@ -67,10 +67,27 @@
                                      alt="..." id="thumbnail">
                             </div>
                             <div class="col-md-8">
-                                <div class="form-group bmd-form-group">
-                                    <label>Gambar</label>
-                                    <input type="file" name="gambar" id="gambar" class="form-control"
-                                           style="position: initial; opacity: 1">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group bmd-form-group">
+                                            <label>Gambar</label>
+                                            <input type="file" name="gambar" id="gambar" class="form-control"
+                                                   style="position: initial; opacity: 1">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <h5>Or</h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group bmd-form-group">
+                                            <label>URL</label>
+                                            <input type="text" name="url_gambar" class="form-control">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

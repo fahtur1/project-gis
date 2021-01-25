@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DataController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,6 +20,14 @@ Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
+Route::prefix('/user')->group(function () {
+
+    Route::get('/', [UserController::class, 'show'])->name('user');
+    Route::get('/about', [UserController::class, 'showAbout'])->name('about');
+    Route::get('/maps', [UserController::class, 'showMaps'])->name('maps');
+
+});
+
 Route::prefix('/admin')->group(function () {
 
     Route::get('/', function () {
@@ -34,6 +43,8 @@ Route::prefix('/admin')->group(function () {
 
         Route::get('/update_data/{id}', [DataController::class, 'showUpdate'])->name('update_data.get');
         Route::post('/update_data', [DataController::class, 'update'])->name('update_data.post');
+
+        Route::get('/detail_data/{id}', [AdminController::class, 'detail'])->name('detail_data');
 
         Route::get('/add_data', [DataController::class, 'show'])->name('add_data.get');
         Route::post('/add_data', [DataController::class, 'create'])->name('add_data.post');

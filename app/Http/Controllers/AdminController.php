@@ -36,7 +36,7 @@ class AdminController extends Controller
     {
         $data = [
             'title' => 'List Of Place',
-            'list' => Features::paginate(6)
+            'list' => Features::paginate(10)
         ];
 
         return view('admin/list_place', $data);
@@ -58,7 +58,17 @@ class AdminController extends Controller
             ]
         ];
 
-        return view('admin/maps', $data);
+        return view('admin.maps', $data);
+    }
+
+    public function detail($id)
+    {
+        $data = [
+            'title' => 'Detail Data',
+            'feature' => Features::find($id)
+        ];
+
+        return view('admin.detail_place', $data);
     }
 
 }

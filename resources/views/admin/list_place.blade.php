@@ -77,7 +77,7 @@
                                         {{ $l['property']['alamat'] }}
                                     </td>
                                     <td class="text-center">
-                                        <a class="btn btn-primary btn-sm">
+                                        <a class="btn btn-primary btn-sm" href="{{ route('detail_data', $l['id_feature']) }}">
                                             <i class="material-icons text-white">search</i>
                                         </a>
                                         <a class="btn btn-warning btn-sm"
@@ -85,7 +85,8 @@
                                             <i class="material-icons text-white">edit</i>
                                         </a>
                                         <a class="btn btn-danger btn-sm"
-                                           href="{{ route('delete', ['id' => $l['id_feature']]) }}">
+                                           href="{{ route('delete', ['id' => $l['id_feature']]) }}"
+                                           onclick="return confirm('Are you sure to delete {{ $l['property']['nama_toko'] }} ?')">
                                             <i class="material-icons text-white">delete</i>
                                         </a>
                                     </td>
