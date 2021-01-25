@@ -87,8 +87,6 @@ class DataController extends Controller
 
         $gambar = $property->gambar;
 
-//        dd($gambar);
-
         if (isset($file) && $request->post('url_gambar') != null) {
             $request->validate([
                 'url_gambar' => function ($attribute, $value, $fail) {

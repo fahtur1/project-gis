@@ -1,8 +1,15 @@
 @extends('layout.app')
 
 @section('content')
-    <div class="row">
-        <div class="col-md-6 mx-auto">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card card-profile">
+                <div class="card-body">
+                    <div id="map" style="height: 350px;" class="w-100"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
             <div class="card card-profile">
                 <div class="card-avatar">
                     <a href="javascript:;">
@@ -40,3 +47,30 @@
         </div>
     </div>
 @endsection
+
+@push('js')
+    <script>
+        let x =  {{ $feature['geometry']['coordinates'][0] }};
+        let y = {{ $feature['geometry']['coordinates'][1] }};
+
+        let mapCenter = [y, x]; // Coordinat Riau
+        let map = L.map('map').setView(mapCenter, 17);
+        let accessToken = 'pk.eyJ1IjoiZmFodHVyMSIsImEiOiJja2owbm1wNXYxcXdwMnFwMjl6OW43Zno4In0.F2jdwFNykOh79BFbI01vtg';
+
+        let marker = L.marker([y, x]).addTo(map);
+
+        const init = async () => {
+            L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                id: 'mapbox/streets-v11',
+                maxZoom: 18,
+                tileSize: 512,
+                zoomOffset: -1,
+                accessToken: accessToken
+            }).addTo(map);
+        }
+
+        init();
+
+    </script>
+@endpush
